@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-service
+  labels:
+    app: {{ .Release.Name }}-app
+spec:
+  # Облачный сервис будет решать как распределить нагрузку
+  type: LoadBalancer
+  selector:
+    project: {{ .Release.Name }}
+  ports:
+    - port: {{ .Values.port }}

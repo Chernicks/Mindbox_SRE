@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-deploy
+  labels:
+    app: {{ .Release.Name }}-app
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      project: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        project: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Release.Name }}-image
+          image: {{ .Values.container.image }}
+          ports:
+          - containerPort: {{ .Values.port }}
+          # ОЗУ потребляется однаково = 128Mi
+          # ЦПУ изначально повышенно на первые запросы, затем потребление снижается до 0.1
+          resources:          
+            limits:
+              cpu: {{ .Values.resources.cpulim }}
+              memory: {{ .Values.resources.memory }}
+            requests:
+              cpu: {{ .Values.resources.cpureq }}
+              memory: {{ .Values.resources.memory }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.port }}
+            # Выделяем от 5 до 10 секунд на инициализацию 
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}

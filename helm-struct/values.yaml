@@ -1,0 +1,24 @@
+# Выбираем образ
+container:
+  image: nging:latest
+
+# Выбираем нагрузку в дневное и ночное время
+replicaCount: 1
+autoscaler:
+  minReplicas: 1
+  maxReplicas: 4
+
+# Выбираем нагрузку по ОЗУ и CPU
+resources:
+  memory: 128Mi
+  cpulim: 0.15
+  cpureq: 0.1
+
+# Выбираем время инициализации приложения
+livenessProbe:
+  initialDelaySeconds: 5
+  failureThreshold: 5
+  periodSeconds: 1
+
+# Выбираем порт
+port: 80
